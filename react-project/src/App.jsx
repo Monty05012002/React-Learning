@@ -822,47 +822,90 @@
 // }
 
 
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { fetchUsers } from "./api/users";
+// import React, { useEffect, useState } from "react";
+// import axios from "axios";
+// import { fetchUsers } from "./api/users";
+
+// export default function App() {
+//   const [users, setUsers] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+
+//   useEffect(() => {
+//     // Create a cancel token for Axios
+//     const source = axios.CancelToken.source();
+
+//     async function loadUsers() {
+//       try {
+//         const data = await fetchUsers(source.token);
+//         setUsers(data);
+//       } catch (err) {
+//         setError(err.message);
+//       } finally {
+//         setLoading(false);
+//       }
+//     }
+
+//     loadUsers();
+
+//     // Cleanup: cancel request if component unmounts
+//     return () => {
+//       source.cancel("Component unmounted, request canceled.");
+//     };
+//   }, []);
+
+//   if (loading) return <p>Loading...</p>;
+//   if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
+
+//   return (
+//     <div>
+//       <h1>Users List (Axios + Cancel Token)</h1>
+//       <ul>
+//         {users.map((u) => (
+//           <li key={u.id}>{u.name}</li>
+//         ))}
+//       </ul>
+//     </div>
+//   );
+// }
+// import React from 'react';
+// import { useSelector, useDispatch } from 'react-redux';
+// import { increment, decrement, reset } from './counterSlice';
+
+// export default function App() {
+//   const count = useSelector((state) => state.counter.value); // read state
+//   const dispatch = useDispatch(); // dispatch actions
+
+//   return (
+//     <div style={{ textAlign: 'center', marginTop: '50px' }}>
+//       <h1>Counter: {count}</h1>
+//       <button onClick={() => dispatch(increment())}>+ Increment</button>
+//       <button onClick={() => dispatch(decrement())}>- Decrement</button>
+//       <button onClick={() => dispatch(reset())}>Reset</button>
+//     </div>
+//   );
+// }
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchUsers } from './usersSlice';
 
 export default function App() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const { list, loading, error } = useSelector((state) => state.users);
 
   useEffect(() => {
-    // Create a cancel token for Axios
-    const source = axios.CancelToken.source();
+    dispatch(fetchUsers()); // fetch users on mount
+  }, [dispatch]);
 
-    async function loadUsers() {
-      try {
-        const data = await fetchUsers(source.token);
-        setUsers(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadUsers();
-
-    // Cleanup: cancel request if component unmounts
-    return () => {
-      source.cancel("Component unmounted, request canceled.");
-    };
-  }, []);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
+  if (loading) return <h2>Loading...</h2>;
+  if (error) return <h2>Error: {error}</h2>;
 
   return (
     <div>
-      <h1>Users List (Axios + Cancel Token)</h1>
+      <h1>User List</h1>
       <ul>
-        {users.map((u) => (
-          <li key={u.id}>{u.name}</li>
+        {list.map((user) => (
+          <li key={user.id}>{user.name}</li>
         ))}
       </ul>
     </div>
